@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { ImageBackground, StyleSheet, TouchableOpacity } from 'react-native'
 import { View,Text, TextInput ,Image} from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -6,26 +6,32 @@ import { confirmPasswordReset, createUserWithEmailAndPassword, signInWithEmailAn
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { Formik, validateYupSchema } from 'formik';
 import * as Yup from 'yup'
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
+import { FIRESTORE_DB } from '../firebaseConfig';
+
+
+
+  
 const Login=({navigation})=>{
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
     const [loading,setloading]=useState(false)
     const auth=FIREBASE_AUTH;
+    const firestore_db=FIRESTORE_DB;
     const signIn= async ()=>{
         setloading(true)
         try{
-           if(email != null && password != null)
-           {
-                const reponse =await signInWithEmailAndPassword(auth,email,password)
-            
-                navigation.navigate("main",{email})
-           }
+            const reponse = signInWithEmailAndPassword(auth,email,password)
+            const user=auth.currentUser
+            const id= user.uid;
+            navigation.navigate("Home",{email,id}) 
         }catch(error){
             console.log(error)
-            alert('Tài khoản hoặc mật khẩu sai')
+            alert('Tài khoản hoặc mật khẩu không đúng')
         }
         
     }
+    
     const SignupSchema = Yup.object().shape({
         email: Yup.string().email('lỗi email rồi bạn yêu').required('Nhập email bạn iu!'),
         password: Yup.string()
@@ -81,6 +87,7 @@ const Login=({navigation})=>{
         </Formik>
     )
 }
+
 export default Login
 const style=StyleSheet.create({
     Text_Register:{

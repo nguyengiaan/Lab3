@@ -1,6 +1,10 @@
 import React from 'react'
 import { ImageBackground, StyleSheet,Text,View,Image } from 'react-native'
+import { useRoute } from '@react-navigation/native';
 const Main=({navigation,route})=>{
+    const { params } = useRoute();
+    const receivedData = params?.email;
+    console.log(receivedData)
     return(
         <View style={style.View_Main}>
             <ImageBackground source={require('../Image/JHYTI.jpg')} style={style.Background}>
@@ -10,7 +14,7 @@ const Main=({navigation,route})=>{
                     </View>
                
                    <View style={style.View_2}>
-                        <Text style={style.Text}>{route.params.email}</Text>
+                        <Text style={style.Text}>{receivedData}</Text>
                    </View>
 
                 </View>
